@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
-import { User, Account } from "../models";
-import { Observable, ReplaySubject } from "rxjs";
+import { Account } from "../models";
+import { BehaviorSubject, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { JwtService } from "./jwt.service";
 import { ApiService } from "./api.service";
 
 @Injectable()
 export class AccountService {
-  private isAuthenticatedSubject = new ReplaySubject<boolean>(1);
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated = this.isAuthenticatedSubject.asObservable();
 
   constructor(
@@ -34,7 +34,7 @@ export class AccountService {
     this.isAuthenticatedSubject.next(false);
   }
 
-  attemptAuth(email: string, password: string): Observable<User> {
+  attemptAuth(email: string, password: string): Observable<Account> {
     return this.apiService.post('/user/login',{email: email, password: password})
       .pipe(map(
         data => {
